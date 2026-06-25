@@ -20,7 +20,4 @@ export class Earner {
 
 export const EarnerSchema = SchemaFactory.createForClass(Earner);
 
-EarnerSchema.index(
-  { expiresAt: 1 },
-  { expireAfterSeconds: 60 * 10 }
-);
+EarnerSchema.index({ status: 1, expiresAt: 1 });

@@ -19,9 +19,8 @@ export class EarningsListenerService {
 
   @Cron('*/15 * * * * *') // every 15 seconds
   async handleEarnerOrders() {
-    this.logger.log('CRON IS RUNNING')
-    
     const now = new Date();
+    this.logger.log(`CRON IS RUNNING — ${now.toISOString()}`)
 
     const existing_earners = await this.earnerModel.find({
       status: 'pending',
@@ -45,9 +44,10 @@ export class EarningsListenerService {
           try {
             await this.processCompletedOrder(order);
 
-            order.status = 'completed';
-            await order.save();
-
+            // order.status = 'completed';
+            // await order.save();
+            await this.earnerModel.deleteOne({ _id: order._id }); // delete after processing
+            this.logger.log(`Processed and deleted order ${order._id}`);
           } catch (error) {
             order.status = 'failed';
             await order.save();
